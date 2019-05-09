@@ -1,5 +1,11 @@
 
 This tensor2tensor is built for transformer. 
+Uisng virtual environment: ~/virtual/tf1.11, python 3.5, tensorflow =1.11.0
+
+
+Source env_setup.sh will help me set-up the parameters
+
+
 
 
 # Tensor2Tensor
