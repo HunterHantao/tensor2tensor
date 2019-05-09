@@ -7,6 +7,20 @@ Source env_setup.sh will help me set-up the parameters
 
 
 
+How to run transoformer with customized parameters
+
+Try this: UDA_VISIBLE_DEVICES=2,3 t2t-trainer   --data_dir=$DATA_DIR   --problems=translate_ende_wmt32k   --model=$MODEL   --hparams_set=$HPARAMS   --output_dir=$TRAIN_DIR --hp_num_encoder_layers 5 --hp_num_decoder_layers 3 --hp_max_input_seq_length 112 --hp_max_target_seq_length 224 --hp_hidden_size 256 
+
+All the --hp_* are the customized parameters. 
+
+If you see this info below, it means your setting is correct. You can also double check it at the checkpoint folder
+
+ "INFO:tensorflow:Found unparsed command-line arguments. Checking if any start with --hp_ and interpreting those as hparams settings.
+[2019-05-09 14:59:04,102] Found unparsed command-line arguments. Checking if any start with --hp_ and interpreting those as hparams settings.
+INFO:tensorflow:Overriding hparams in transformer_base_single_gpu with num_encoder_layers=5,num_decoder_layers=3,max_input_seq_length=112,max_target_seq_length=224,hidden_size=256
+[2019-05-09 14:59:04,103] Overriding hparams in transformer_base_single_gpu with num_encoder_layers=5,num_decoder_layers=3,max_input_seq_length=112,max_target_seq_length=224,hidden_size=256"
+
+
 
 # Tensor2Tensor
 
