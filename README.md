@@ -22,6 +22,23 @@ INFO:tensorflow:Overriding hparams in transformer_base_single_gpu with num_encod
 
 
 
+
+
+Run Chinese-English Transformer: CUDA_VISIBLE_DEVICES=2,3 t2t-trainer   --data_dir=$DATA_DIR   --problems=translate_enzh_wmt32k   --model=$MODEL   --hparams_set=$HPARAMS   --output_dir=$TRAIN_DIR --hp_num_encoder_layers 5 --hp_num_decoder_layers 3 --hp_max_input_seq_length 112 --hp_max_target_seq_length 224 --hp_hidden_size 256 --hp_max_relative_position 20 --hp_self_attention_type dot_product_relative --hp_pos timing  --num_word_prediction_layers 2
+
+
+Run English-German Transformer: CUDA_VISIBLE_DEVICES=2,3 t2t-trainer   --data_dir=$DATA_DIR   --problems=translate_ende_wmt32k   --model=$MODEL   --hparams_set=$HPARAMS   --output_dir=$TRAIN_DIR --hp_num_encoder_layers 5 --hp_num_decoder_layers 3 --hp_max_input_seq_length 112 --hp_max_target_seq_length 224 --hp_hidden_size 256 --hp_max_relative_position 20 --hp_self_attention_type dot_product_relative --hp_pos timing --train_steps=2000000
+
+
+
+
+
+
+
+
+
+
+
 # Tensor2Tensor
 
 [![PyPI
