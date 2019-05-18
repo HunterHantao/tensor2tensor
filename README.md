@@ -32,9 +32,14 @@ Run English-German Transformer: CUDA_VISIBLE_DEVICES=2,3 t2t-trainer   --data_di
 
 
 
+Compute BLEU
+
+DECODE_FILE=/home/hantao/HantaoHuang/project/tensor2tensor/experiment/t2t_datagen/dev/newstest2013.en
 
 
+CUDA_VISIBLE_DEVICES=0,1 t2t-decoder   --data_dir=$DATA_DIR   --problems=$PROBLEM   --model=$MODEL   --hparams_set=$HPARAMS   --output_dir=$TRAIN_DIR   --decode_hparams="beam_size=$BEAM_SIZE,alpha=$ALPHA"   --decode_from_file=$DECODE_FILE   --decode_to_file=translation.en
 
+t2t-bleu --translation=translation.en -reference=/home/hantao/HantaoHuang/project/tensor2tensor/experiment/t2t_datagen/dev/newstest2013.de
 
 
 
