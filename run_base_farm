@@ -1,0 +1,11 @@
+#!/bin/bash
+
+source env_setup
+
+#TRAIN_DIR=$HOME/t2t_train/$PROBLEM/$MODEL-transformer_base
+
+
+TRAIN_DIR=$HOME/t2t_train/$PROBLEM/$MODEL-transformer_base_4
+# 4 number of gpus
+
+python3 ./tensor2tensor/bin/t2t_trainer.py --data_dir=$DATA_DIR --problems=$PROBLEM --model=$MODEL --hparams_set=transformer_base --output_dir=$TRAIN_DIR --worker_gpu=4 --hparams='batch_size=4096'

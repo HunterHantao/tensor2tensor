@@ -1,0 +1,16 @@
+#!/bin/bash
+
+source env_setup
+TRAIN_DIR=$HOME/t2t_train/$PROBLEM/$MODEL-transformer_base_4
+
+
+BEAM_SIZE=4
+ALPHA=0.6
+
+DECODE_FILE=./experiment/t2t_datagen/dev/newstest2014.en
+
+
+python3 ./tensor2tensor/bin/t2t_decoder.py --data_dir=$DATA_DIR --problems=$PROBLEM --model=$MODEL --hparams_set=transformer_base --output_dir=$TRAIN_DIR --decode_hparams="beam_size=$BEAM_SIZE,alpha=$ALPHA" --decode_from_file=$DECODE_FILE --decode_to_file=translation_2014.en
+
+python3 ./tensor2tensor/bin/t2t_bleu.py  --translation=translation_2014.en --reference=./experiment/t2t_datagen/dev/newstest2014.de
+
