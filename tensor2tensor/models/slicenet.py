@@ -1,5 +1,5 @@
 # coding=utf-8
-# Copyright 2018 The Tensor2Tensor Authors.
+# Copyright 2019 The Tensor2Tensor Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,15 +17,13 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-
-# Dependency imports
-
-from six.moves import xrange  # pylint: disable=redefined-builtin
+from six.moves import range  # pylint: disable=redefined-builtin
 from six.moves import zip  # pylint: disable=redefined-builtin
 
 from tensor2tensor.layers import common_attention
 from tensor2tensor.layers import common_hparams
 from tensor2tensor.layers import common_layers
+from tensor2tensor.layers import modalities
 from tensor2tensor.utils import registry
 from tensor2tensor.utils import t2t_model
 
@@ -117,7 +115,7 @@ def multi_conv_res(x, padding, name, layers, hparams, mask=None, source=None):
         return common_layers.apply_norm(
             x, hparams.norm_type, hparams.hidden_size, hparams.norm_epsilon)
 
-    for layer in xrange(layers):
+    for layer in range(layers):
       with tf.variable_scope("layer_%d" % layer):
         y = common_layers.subseparable_conv_block(
             x,
@@ -187,19 +185,6 @@ def slicenet_middle(inputs_encoded, targets, target_space_emb, mask, hparams):
   target_space_emb = tf.tile(target_space_emb,
                              [tf.shape(targets_flat)[0], 1, 1, 1])
 
-  # Calculate similarity loss (but don't run if not needed).
-  if len(hparams.problems) > 1 and hparams.sim_loss_mult > 0.00001:
-    targets_timed = common_layers.add_timing_signal(targets_flat)
-    extra_layers = int(hparams.num_hidden_layers * 1.5)
-    with tf.variable_scope(tf.get_variable_scope(), reuse=True):
-      targets_encoded = multi_conv_res(targets_timed, "SAME", "encoder",
-                                       extra_layers, hparams)
-    with tf.variable_scope("similarity_loss"):
-      similarity_loss = similarity_cost(inputs_encoded, targets_encoded)
-      similarity_loss *= hparams.sim_loss_mult
-  else:
-    similarity_loss = 0.0
-
   # Use attention from each target to look at input and retrieve.
   targets_shifted = common_layers.shift_right(
       targets_flat, pad_value=target_space_emb)
@@ -224,7 +209,7 @@ def slicenet_middle(inputs_encoded, targets, target_space_emb, mask, hparams):
       separability=4,
       name="targets_merge")
 
-  return targets_merged, similarity_loss
+  return targets_merged, 0.0
 
 
 def embed_target_space(target_space_id, hidden_size):
@@ -280,10 +265,9 @@ def slicenet_internal(inputs, targets, target_space, hparams, run_decoder=True):
 class SliceNet(t2t_model.T2TModel):
 
   def body(self, features):
-    target_modality_name = (
-        self._problem_hparams.target_modality.name)
-    # If we're just predicing a class, there is no use for a decoder.
-    run_decoder = "class_label_modality" not in target_modality_name
+    target_modality = self._problem_hparams.modality["targets"]
+    # If we're just predicting a class, there is no use for a decoder.
+    run_decoder = target_modality != modalities.ModalityType.CLASS_LABEL
     return slicenet_internal(
         features["inputs"],
         features["targets"],
